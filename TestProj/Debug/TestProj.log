@@ -1,0 +1,114 @@
+﻿  Main.cpp
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,57): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,57): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,57): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,57): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,57): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,50): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,50): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,50): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,50): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\GraphicsManager.h(17,50): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,68): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,68): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,68): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,68): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,68): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,53): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,53): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,53): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,53): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(51,53): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,73): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,73): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,73): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,73): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,73): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,56): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,56): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,56): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,56): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(54,56): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(87,35): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(87,35): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(87,35): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(87,35): warning C4244:             T=unsigned int
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(87,35): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(86,35): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(86,35): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(86,35): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(86,35): warning C4244:             T=unsigned int
+C:\Users\Dell\OneDrive\Desktop\TestProj\MainMenuScreen.h(86,35): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ShopScreen.h(85,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ShopScreen.h(94,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\TrainingCampScreen.h(121,47): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\TrainingCampScreen.h(125,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\TrainingCampScreen.h(131,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\TrainingCampScreen.h(135,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\AIPlayer.h(14,19): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(145,56): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(147,59): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(155,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(157,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,60): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,60): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,60): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,60): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,60): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,43): warning C4244: 'argument': conversion from 'const int' to 'T', possible loss of data
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,43): warning C4244:         with
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,43): warning C4244:         [
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,43): warning C4244:             T=float
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(209,43): warning C4244:         ]
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(259,32): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(263,29): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+C:\Users\Dell\OneDrive\Desktop\TestProj\ArenaScreen.h(269,25): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'Main.cpp')
+  
+  TestProj.vcxproj -> C:\Users\Dell\OneDrive\Desktop\TestProj\Debug\TestProj.exe
