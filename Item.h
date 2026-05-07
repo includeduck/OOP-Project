@@ -39,6 +39,9 @@ public:
         delete[] description;
     }
 
+    Item(const Item&) = delete;
+    Item& operator=(const Item&) = delete;
+
     // Getters
     const char* getName() const { return name; }
     const char* getDescription() const { return description; }

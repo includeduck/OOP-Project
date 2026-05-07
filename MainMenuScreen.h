@@ -2,6 +2,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "AssetUtils.h"
 #include "UIScreen.h"
 #include "GraphicsManager.h"
 #include "MainMenu.h"
@@ -78,14 +79,18 @@ public:
 private:
     void initializeResources() {
         font = new sf::Font();
-        font->loadFromFile("assets/main_font.ttf");
+        loadFont(*font, "assets/main_font.ttf");
 
-        backgroundTex.loadFromFile("assets/menu_bg.png");
+        loadTextureOrPlaceholder(backgroundTex, "assets/menu_bg.png");
         background.setTexture(backgroundTex);
-        background.setScale(
-            graphics->getSize().x / backgroundTex.getSize().x,
-            graphics->getSize().y / backgroundTex.getSize().y
-        );
+        auto texSize = backgroundTex.getSize();
+        if (texSize.x > 0 && texSize.y > 0)
+        {
+            background.setScale(
+                graphics->getSize().x / float(texSize.x),
+                graphics->getSize().y / float(texSize.y)
+            );
+        }
     }
     
     void setupMenuItems() {

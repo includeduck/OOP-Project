@@ -9,7 +9,7 @@ class AIPlayer : public Player
 public:
     AIPlayer() : Player()
     {
-        srand(static_cast<unsigned>(time(0))); // Seed the random number generator
+        // RNG is seeded once in Game
     }
 
     void update(double dt, Player* enemy) override

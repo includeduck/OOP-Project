@@ -16,6 +16,7 @@ public:
 
     void applyEffect(Pet* target) override
     {
+        if (!target) return;
         if (type == TYPE_ATTACK_BUFF)
         {
             double newAP = target->getAttackPower() * magnitude;

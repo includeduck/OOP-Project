@@ -33,6 +33,9 @@ public:
         for (int i = 0; i < selectedCount; ++i) delete selected[i];
     }
 
+    PetSelection(const PetSelection&) = delete;
+    PetSelection& operator=(const PetSelection&) = delete;
+
     int getPrototypeCount() const { return NUM_PROTOTYPES; }
 
     Pet* getPrototype(int idx) const
@@ -64,9 +67,13 @@ public:
 
 	bool isSelected(int idx) const
     {
+        if (idx < 0 || idx >= NUM_PROTOTYPES) return false;
+        Pet* proto = prototypes[idx];
+        if (!proto) return false;
+        int type = proto->getType();
 		for (int i = 0; i < selectedCount; ++i)
         {
-			if (selected[i] == prototypes[idx]) return true;
+            if (selected[i] && selected[i]->getType() == type) return true;
 		}
 		return false;
 	}
@@ -99,6 +106,7 @@ public:
 
     void commitTo(Player* player)
     {
+        if (!player) return;
         for (int i = 0; i < selectedCount; ++i)
         {
             player->addPet(selected[i]);

@@ -98,6 +98,11 @@ private:
                 {
                     ai.addPet(pool[rand() % 4]);
                 }
+                for (int i = 0; i < 4; ++i)
+                {
+                    delete pool[i];
+                    pool[i] = nullptr;
+                }
 
                 // create core & screen
                 corePtr = new GameCore(&human, &ai);

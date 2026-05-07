@@ -2,6 +2,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <string>
+#include "AssetUtils.h"
 #include "UIScreen.h"
 #include "GraphicsManager.h"
 #include "Shop.h"
@@ -60,21 +62,20 @@ public:
     {
         // Load font once
         font = new sf::Font();
-        if (!font->loadFromFile("assets/main_font.ttf")) {
-            // handle font load failure
-        }
+        loadFont(*font, "assets/main_font.ttf");
 
         // Background
-        if (!bgTexture.loadFromFile("assets/shop_bg.png")) {
-            // handle error
-        }
+        loadTextureOrPlaceholder(bgTexture, "assets/shop_bg.png");
         bgSprite.setTexture(bgTexture);
         auto winSize = graphics->getSize();
         auto texSize = bgTexture.getSize();
-        bgSprite.setScale(
-            float(winSize.x) / texSize.x,
-            float(winSize.y) / texSize.y
-        );
+        if (texSize.x > 0 && texSize.y > 0)
+        {
+            bgSprite.setScale(
+                float(winSize.x) / float(texSize.x),
+                float(winSize.y) / float(texSize.y)
+            );
+        }
 
         // Title
         titleText.setFont(*font);
@@ -109,9 +110,7 @@ public:
         const double prices[NUM_ITEMS] = { 30.0, 75.0, 75.0 };
 
         for (int i = 0; i < NUM_ITEMS; ++i) {
-            if (!itemTextures[i].loadFromFile(imgFiles[i])) {
-                // handle error
-            }
+            loadTextureOrPlaceholder(itemTextures[i], imgFiles[i]);
             itemSprites[i].setTexture(itemTextures[i]);
             itemSprites[i].setPosition(50.f, 100.f + i * 120.f);
             float scale = 0.4f;
@@ -182,7 +181,7 @@ public:
         }
         if (exitButtonGlowing && exitButtonClock.getElapsedTime().asSeconds() > 0.1f)
             exitButtonGlowing = false;
-        coinText.setString("Coins: " + std::to_string((int)player->getCoins()));
+        coinText.setString("Coins: " + std::to_string((int)(player ? player->getCoins() : 0)));
         if (state == SHOP_STATE_FEEDBACK && feedbackTimer.getElapsedTime().asSeconds() > 0.5f)
             state = SHOP_STATE_BROWSING;
     }
@@ -211,6 +210,7 @@ public:
 private:
     // Purchase logic
     void tryBuy(int itemIndex) {
+        if (!shopLogic || !player) { showFeedback("Shop error"); return; }
         Item* it = shopLogic->buyItem(itemIndex, player->getCoinsRef());
         if (it) {
             if (player->addItem(it)) showFeedback("Purchased!");

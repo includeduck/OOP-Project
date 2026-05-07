@@ -9,6 +9,13 @@
 class Shop
 {
 public:
+    static constexpr double PRICE_HEAL = 30.0;
+    static constexpr double PRICE_ATTACK = 75.0;
+    static constexpr double PRICE_DEFENSE = 75.0;
+    static constexpr double HEAL_AMOUNT = 50.0;
+    static constexpr double BUFF_MULTIPLIER = 1.2; // +20%
+    static constexpr int BUFF_DURATION = 3;
+
     void showItems() const
     {
         std::cout
@@ -21,9 +28,9 @@ public:
 	{
 		switch (choice)
 		{
-		    case 1: return 30.0;
-		    case 2: return 75.0;
-		    case 3: return 75.0;
+		    case 1: return PRICE_HEAL;
+		    case 2: return PRICE_ATTACK;
+		    case 3: return PRICE_DEFENSE;
 		    default: return 0.0;
 		}
 	}
@@ -33,24 +40,24 @@ public:
         switch (choice)
         {
             case 1:
-                if (playerCoins >= 30.0)
+                if (playerCoins >= PRICE_HEAL)
                 {
-                    playerCoins -= 30.0;
-                    return new HealPotion("Small Heal Potion", "Restores 50 HP", 600, 50.0);
+                    playerCoins -= PRICE_HEAL;
+                    return new HealPotion("Small Heal Potion", "Restores 50 HP", PRICE_HEAL, HEAL_AMOUNT);
                 }
                 break;
             case 2:
-                if (playerCoins >= 75.0)
+                if (playerCoins >= PRICE_ATTACK)
                 {
-                    playerCoins -= 75.0;
-                    return new BuffPotion("Attack Elixir", "Boosts attack by 20% for 3 hits", 75.0, TYPE_ATTACK_BUFF, 3, 3);
+                    playerCoins -= PRICE_ATTACK;
+                    return new BuffPotion("Attack Elixir", "Boosts attack by 20% for 3 hits", PRICE_ATTACK, TYPE_ATTACK_BUFF, BUFF_MULTIPLIER, BUFF_DURATION);
                 }
                 break;
             case 3:
-                if (playerCoins >= 75.0)
+                if (playerCoins >= PRICE_DEFENSE)
                 {
-                    playerCoins -= 75.0;
-                    return new BuffPotion("Defense Elixir", "Boosts defense by 20% for 3 hits", 75.0, TYPE_DEFENSE_BUFF, 5, 3);
+                    playerCoins -= PRICE_DEFENSE;
+                    return new BuffPotion("Defense Elixir", "Boosts defense by 20% for 3 hits", PRICE_DEFENSE, TYPE_DEFENSE_BUFF, BUFF_MULTIPLIER, BUFF_DURATION);
                 }
                 break;
         }

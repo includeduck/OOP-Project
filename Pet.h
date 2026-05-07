@@ -33,6 +33,9 @@ public:
 
     virtual ~Pet() { delete[] name; }
 
+    Pet(const Pet&) = delete;
+    Pet& operator=(const Pet&) = delete;
+
     const char *getName() const { return name; }
     double getHealth() const { return health; }
     double getMaxHealth() const { return maxHealth; }
@@ -101,6 +104,7 @@ public:
     {
         if (!isReadyToAttack() || !isAlive())
             return;
+        if (!target) return;
         target->takeDamage(attackPower);
         resetAttackTimer();
     }

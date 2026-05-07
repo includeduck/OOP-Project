@@ -21,27 +21,45 @@ private:
     double aiSwapTimer;        // Tracks elapsed time since last AI swap
     double aiNextSwapDuration; // Random duration until next AI swap
 
+    static int clampIndex(int idx, int size)
+    {
+        if (size <= 0) return 0;
+        if (idx < 0) return 0;
+        if (idx >= size) return size - 1;
+        return idx;
+    }
+
     // Count alive pets
     int countAlive(Player* p) const {
+        if (!p) return 0;
         int cnt = 0;
         for (int i = 0; i < p->getTeamSize(); ++i)
-            if (p->getPet(i)->isAlive()) ++cnt;
+        {
+            Pet* pet = p->getPet(i);
+            if (pet && pet->isAlive()) ++cnt;
+        }
         return cnt;
     }
 
     // End battle when no alive pets on one side
     void checkEnd() {
-        if (countAlive(human) == 0 || countAlive(ai) == 0) {
+        int humanAlive = countAlive(human);
+        int aiAlive = countAlive(ai);
+        if (humanAlive == 0 || aiAlive == 0) {
             battleOver = true;
-            humanWon = (countAlive(human) > 0);
+            humanWon = (humanAlive > 0);
         }
     }
 
     // Auto-swap active if active pet died
     void autoSwap(Player* p, int& activeIndex) {
-        if (p->getPet(activeIndex)->isAlive()) return;
+        if (!p) return;
+        activeIndex = clampIndex(activeIndex, p->getTeamSize());
+        Pet* active = p->getPet(activeIndex);
+        if (active && active->isAlive()) return;
         for (int i = 0; i < p->getTeamSize(); ++i) {
-            if (p->getPet(i)->isAlive()) {
+            Pet* pet = p->getPet(i);
+            if (pet && pet->isAlive()) {
                 activeIndex = i;
                 return;
             }
@@ -50,19 +68,22 @@ private:
 
     // Randomly selects a duration between 8 and 14 seconds
     double getRandomSwapDuration() const {
-        return 1.0 + (std::rand() % 3);
+        return 8.0 + (std::rand() % 7); // 8..14
     }
 
     // AI swaps its active pet with a random benched pet
     void aiSwapPet() {
+        if (!ai) return;
         int currentActive = ai->getActivePetIndex();
-        int possibleSwaps[10]; // Array for benched pets (max size 10)
+        int possibleSwaps[MAX_TEAM_SIZE];
         int validSwapCount = 0;
 
         // Find valid swap candidates
         for (int i = 0; i < ai->getTeamSize(); ++i) {
-            if (i != currentActive && ai->getPet(i) && ai->getPet(i)->isAlive()) {
-                possibleSwaps[validSwapCount++] = i;
+            Pet* pet = ai->getPet(i);
+            if (i != currentActive && pet && pet->isAlive()) {
+                if (validSwapCount < MAX_TEAM_SIZE)
+                    possibleSwaps[validSwapCount++] = i;
             }
         }
 
@@ -78,13 +99,13 @@ public:
     /// Players must have at least one pet
     GameCore(Player* _human, AIPlayer* _ai) : human(_human), ai(_ai), humanActive(0), aiActive(0), battleOver(false), humanWon(false), aiSwapTimer(0.0), aiNextSwapDuration(3.0)
     {
-        std::srand(static_cast<unsigned>(std::time(0)));
         aiNextSwapDuration = getRandomSwapDuration();
     }
 
     /// Called every frame
     void update(double dt) {
         if (battleOver) return;
+        if (!human || !ai) { battleOver = true; humanWon = false; return; }
 
         // Update AI swap timer
         aiSwapTimer += dt;
@@ -139,9 +160,12 @@ public:
     // Human commands on active pet
     void humanAttack() {
         if (battleOver) return;
+        if (!human || !ai) return;
+        humanActive = clampIndex(humanActive, human->getTeamSize());
+        aiActive = clampIndex(aiActive, ai->getTeamSize());
         Pet* h = human->getPet(humanActive);
         Pet* a = ai->getPet(aiActive);
-        if (h->isAlive() && a->isAlive() && h->isReadyToAttack()) {
+        if (h && a && h->isAlive() && a->isAlive() && h->isReadyToAttack()) {
             h->performAttack(a);
             checkEnd();
         }
@@ -149,9 +173,12 @@ public:
 
     void humanUseAbility(int idx) {
         if (battleOver) return;
+        if (!human || !ai) return;
+        humanActive = clampIndex(humanActive, human->getTeamSize());
+        aiActive = clampIndex(aiActive, ai->getTeamSize());
         Pet* h = human->getPet(humanActive);
         Pet* a = ai->getPet(aiActive);
-        if (h->isAlive() && a->isAlive() && h->isReadyToAttack()) {
+        if (h && a && h->isAlive() && a->isAlive() && h->isReadyToAttack()) {
             h->useAbility(idx, a);
             checkEnd();
         }
@@ -159,8 +186,10 @@ public:
 
     /// Player chooses bench pet to swap in
     void humanSwap(int benchIndex) {
+        if (!human) return;
         if (benchIndex < 0 || benchIndex >= human->getTeamSize()) return;
-        if (!human->getPet(benchIndex)->isAlive()) return;
+        Pet* p = human->getPet(benchIndex);
+        if (!p || !p->isAlive()) return;
         humanActive = benchIndex;
     }
 

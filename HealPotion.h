@@ -10,6 +10,7 @@ public:
 
     void applyEffect(Pet* target) override
     {
+        if (!target) return;
         double newHP = target->getHealth() + magnitude;
         target->setHealth(newHP);
     }

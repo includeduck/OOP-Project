@@ -35,9 +35,15 @@ public:
     }
 
     virtual ~Player() {    
+        for (int i = 0; i < teamSize; ++i)
+        {
+            delete team[i];
+            team[i] = nullptr;
+        }
         for (int i = 0; i < inventoryCount; ++i)
         {
             delete inventory[i];
+            inventory[i] = nullptr;
         }
     }
 

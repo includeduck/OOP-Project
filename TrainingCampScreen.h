@@ -2,6 +2,8 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <string>
+#include "AssetUtils.h"
 #include "UIScreen.h"
 #include "GraphicsManager.h"
 #include "TrainingCamp.h"
@@ -93,7 +95,7 @@ public:
     {
         // Load font
         font = new sf::Font();
-        font->loadFromFile("assets/main_font.ttf");
+        loadFont(*font, "assets/main_font.ttf");
 
         // Minigame texts
         instruction.setFont(*font);
@@ -175,6 +177,7 @@ public:
     bool isFinished() const override { return finished; }
 
     void handleEvent(const sf::Event& e) override {
+        if (!campLogic || !player) { finished = true; state = TC_STATE_FINISHED; return; }
         if (state == TC_STATE_MINIGAME) {
             if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left) {
                 score++;
@@ -233,6 +236,7 @@ public:
     }
 
     void update(double dt) override {
+        if (!campLogic || !player) { finished = true; state = TC_STATE_FINISHED; return; }
         if (state == TC_STATE_MINIGAME) {
             float elapsed = clock.getElapsedTime().asSeconds();
             float remaining = 5.0f - elapsed;
@@ -261,6 +265,7 @@ public:
 
     void draw(GraphicsManager& g) override {
         g.clear();
+        if (!campLogic || !player) { g.display(); return; }
         if (state == TC_STATE_MINIGAME) {
             g.draw(instruction);
             g.draw(timerText);
@@ -274,7 +279,7 @@ public:
                 petButtons[i].setFillColor(i == selectedPet ? sf::Color(150, 150, 200) : sf::Color(100, 100, 100));
                 g.draw(petButtons[i]);
                 Pet* pet = player->getPet(i);
-                petLabels[i].setString(std::to_string(i + 1) + ". " + pet->getName());
+                petLabels[i].setString(std::to_string(i + 1) + ". " + (pet ? pet->getName() : "(empty)"));
                 g.draw(petLabels[i]);
             }
 
@@ -322,6 +327,9 @@ private:
 
     void spendPoints()
     {
+        if (!campLogic || !player) return;
+        if (selectedPet < 0 || selectedPet >= player->getTeamSize()) return;
+        if (selectedStat < 0 || selectedStat >= MAX_STAT_OPTIONS) return;
         if (campLogic->allocatePoints(player->getPet(selectedPet), selectedStat, pointsToSpend))
         {
             pointsToSpend = 0;

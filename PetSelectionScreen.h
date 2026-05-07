@@ -1,6 +1,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
+#include <cstdio>
+#include "AssetUtils.h"
 #include "UIScreen.h"
 #include "GraphicsManager.h"
 #include "PetSelection.h"
@@ -12,6 +15,8 @@ static const float CARD_HEIGHT = 320.0f;
 static const float CARD_SPACING = 50.0f;
 static const float BUTTON_WIDTH = 200.0f;
 static const float BUTTON_HEIGHT = 50.0f;
+static const float PETSEL_HOVER_SCALE = 1.08f;
+static const float PETSEL_SCALE_SPEED = 12.0f;
 
 class PetSelectionScreen : public UIScreen {
 private:
@@ -67,12 +72,13 @@ public:
 
     void update(double dt) override {
         // Animate card scales
+        if (!selection) return;
         int count = selection->getPrototypeCount();
         for (int i = 0; i < count; ++i) {
             ProtoCard& c = protoCards[i];
             float delta = c.targetScale - c.currentScale;
             if (std::abs(delta) > 0.001f) {
-                c.currentScale += delta * float(dt) * SCALE_SPEED;
+                c.currentScale += delta * float(dt) * PETSEL_SCALE_SPEED;
                 c.background.setScale(c.currentScale, c.currentScale);
                 c.sprite.setScale(c.currentScale * 0.7f, c.currentScale * 0.7f);
             }
@@ -114,8 +120,8 @@ public:
 
 private:
     void loadResources() {
-        font.loadFromFile("assets/main_font.ttf");
-        backgroundTex.loadFromFile("assets/selection_bg.jpg");
+        loadFont(font, "assets/main_font.ttf");
+        loadTextureOrPlaceholder(backgroundTex, "assets/selection_bg.jpg");
         for (int i = 0; i < MAX_PROTOTYPES; ++i)
         {
             const char* path = nullptr;
@@ -126,7 +132,7 @@ private:
                 case 2: path = "assets/griffin.png"; break;
                 case 3: path = "assets/unicorn.png"; break;
             }
-            texPrototypes[i].loadFromFile(path);
+            loadTextureOrPlaceholder(texPrototypes[i], path);
         }
     }
 
@@ -134,8 +140,11 @@ private:
     {
         sf::Vector2u win = graphics->getSize();
         background.setTexture(backgroundTex);
-        background.setScale(float(win.x) / backgroundTex.getSize().x, float(win.y) / backgroundTex.getSize().y);
+        auto bgSize = backgroundTex.getSize();
+        if (bgSize.x > 0 && bgSize.y > 0)
+            background.setScale(float(win.x) / float(bgSize.x), float(win.y) / float(bgSize.y));
 
+        if (!selection) return;
         int count = selection->getPrototypeCount();
         float totalW = count * CARD_WIDTH + (count - 1) * CARD_SPACING;
         float startX = (win.x - totalW) / 2.0f;
@@ -143,7 +152,6 @@ private:
 
         for (int i = 0; i < count; ++i) {
             ProtoCard& c = protoCards[i];
-            int type = selection->getPrototypeType(i);
             float x = startX + i * (CARD_WIDTH + CARD_SPACING);
 
             // initial scales
@@ -159,17 +167,20 @@ private:
             c.background.setOrigin(0, 0);
 
             // sprite
-            c.sprite.setTexture(texPrototypes[type]);
+            c.sprite.setTexture(texPrototypes[i]);
             sf::FloatRect b = c.sprite.getLocalBounds();
             c.sprite.setOrigin(b.width / 2, b.height / 2);
             c.sprite.setPosition(x + CARD_WIDTH / 2, y0 + 90);
 
             // name
-            c.name = makeText(getName(type), 24, x + 16, y0 + 16, sf::Color::White);
+            c.name = makeText(getName(i), 24, x + 16, y0 + 16, sf::Color::White);
             // stats
             char buf[64];
-            Pet* proto = selection->getPrototype(type);
-            std::snprintf(buf, 64, "HP: %.0f  ATK: %.0f", proto->getMaxHealth(), proto->getAttackPower());
+            Pet* proto = selection->getPrototype(i);
+            if (proto)
+                std::snprintf(buf, 64, "HP: %.0f  ATK: %.0f", proto->getMaxHealth(), proto->getAttackPower());
+            else
+                std::snprintf(buf, 64, "HP: ?  ATK: ?");
             c.stats = makeText(buf, 18, x + 16, y0 + 200, sf::Color::Green);
 
             // highlight
@@ -192,6 +203,7 @@ private:
     }
 
     void handleClick(const sf::Vector2f& pos) {
+        if (!selection) return;
         int count = selection->getPrototypeCount();
         for (int i = 0; i < count; ++i) {
             if (protoCards[i].background.getGlobalBounds().contains(pos)) {
@@ -214,10 +226,11 @@ private:
     }
 
     void handleHover(const sf::Vector2f& pos) {
+        if (!selection) return;
         int count = selection->getPrototypeCount();
         for (int i = 0; i < count; ++i) {
             bool over = protoCards[i].background.getGlobalBounds().contains(pos);
-            protoCards[i].targetScale = over ? HOVER_SCALE : 1.0f;
+            protoCards[i].targetScale = over ? PETSEL_HOVER_SCALE : 1.0f;
         }
         bool hoverBtn = btnConfirm.getGlobalBounds().contains(pos);
         btnConfirm.setFillColor(hoverBtn && confirmEnabled ?
@@ -226,7 +239,7 @@ private:
 
     void updateConfirmAppearance()
     {
-        btnConfirm.setFillColor(confirmEnabled ? sf::Color(100, 300, 100) : sf::Color(100, 100, 100));
+        btnConfirm.setFillColor(confirmEnabled ? sf::Color(100, 200, 100) : sf::Color(100, 100, 100));
     }
 
     sf::Text makeText(const char* str, unsigned size, float x, float y, sf::Color col, bool centered = false)

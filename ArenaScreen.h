@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <algorithm>
+#include <string>
+#include "AssetUtils.h"
 #include "UIScreen.h"
 #include "GraphicsManager.h"
 #include "GameCore.h"
@@ -73,22 +76,22 @@ public:
     {
         // Music Loading
 
-        if (!battleMusic.openFromFile("assets/battle_music.ogg")) {}
-        else {
+        if (openMusic(battleMusic, "assets/battle_music.ogg")) {
             battleMusic.setLoop(true);
             battleMusic.setVolume(50.0f);
             battleMusic.play();
         }
 
         font = new sf::Font();
-        font->loadFromFile("assets/main_font.ttf");
+        loadFont(*font, "assets/main_font.ttf");
 
         const float itemButtonX = 1000;
         const float itemButtonY = 600;
         const float itemSpacing = 60;
 
-        Player* human = core->getHumanPlayer();
-        itemCount = human->getInventoryCount();
+        Player* human = core ? core->getHumanPlayer() : nullptr;
+        itemCount = human ? human->getInventoryCount() : 0;
+        itemCount = std::min(itemCount, MAX_ITEMS);
 
         const auto win = graphics->getSize();
         const float panelW = 200.0f;
@@ -109,7 +112,8 @@ public:
             itemButtons[i].setFillColor(sf::Color(70, 70, 200, 200));
             // Label
             itemLabels[i].setFont(*font);
-            itemLabels[i].setString(human->getInventoryItem(i)->getName());
+            Item* it = human ? human->getInventoryItem(i) : nullptr;
+            itemLabels[i].setString(it ? it->getName() : "(empty)");
             itemLabels[i].setCharacterSize(18);
             // center text in the button
             sf::FloatRect b = itemLabels[i].getLocalBounds();
@@ -119,13 +123,13 @@ public:
 
         // Load textures
         texDragon = new sf::Texture();
-        texDragon->loadFromFile("assets/dragon.png");
+        loadTextureOrPlaceholder(*texDragon, "assets/dragon.png");
         texPhoenix = new sf::Texture();
-        texPhoenix->loadFromFile("assets/phoenix.png");
+        loadTextureOrPlaceholder(*texPhoenix, "assets/phoenix.png");
         texUnicorn = new sf::Texture();
-        texUnicorn->loadFromFile("assets/unicorn.png");
+        loadTextureOrPlaceholder(*texUnicorn, "assets/unicorn.png");
         texGriffin = new sf::Texture();
-        texGriffin->loadFromFile("assets/griffin.png");
+        loadTextureOrPlaceholder(*texGriffin, "assets/griffin.png");
 
         humanStatsText.setFont(*font);
         humanStatsText.setCharacterSize(18);
@@ -139,12 +143,16 @@ public:
 
         // Background setup
         bgT = new sf::Texture();
-        bgT->loadFromFile("assets/background.png");
+        loadTextureOrPlaceholder(*bgT, "assets/background.png");
         background.setTexture(*bgT);
-        background.setScale(
-            1280.0f / bgT->getSize().x,
-            720.0f / bgT->getSize().y
-        );
+        auto bgSize = bgT->getSize();
+        if (bgSize.x > 0 && bgSize.y > 0)
+        {
+            background.setScale(
+                1280.0f / float(bgSize.x),
+                720.0f / float(bgSize.y)
+            );
+        }
 
         // Active positions
         activeHuman.setPosition(300, 232);
@@ -153,7 +161,7 @@ public:
         // Bench layout
         const float benchXHuman = 100;
         const float benchXAI = 1280 - 180;
-        for (int i = 0; i < core->getHumanTeamSize(); ++i) {
+        for (int i = 0; core && i < core->getHumanTeamSize(); ++i) {
             benchHuman[i].setTexture(*getTexture(core->getHumanPet(i)));
             benchHuman[i].setScale(0.5f, 0.5f);
             benchHuman[i].setPosition(benchXHuman, 100 + i * 120);
@@ -163,7 +171,7 @@ public:
             benchSelHuman[i].setOutlineThickness(2);
             benchSelHuman[i].setOutlineColor(sf::Color::Green);
         }
-        for (int j = 0; j < core->getAITeamSize(); ++j) {
+        for (int j = 0; core && j < core->getAITeamSize(); ++j) {
             benchAI[j].setTexture(*getTexture(core->getAIPet(j)));
 			benchAI[j].setScale(0.5f, 0.5f);
             benchAI[j].setPosition(benchXAI, 100 + j * 120);
@@ -217,6 +225,7 @@ public:
 
     void handleEvent(const sf::Event& e) override {
         if (state != ARENA_STATE_FIGHTING) return;
+        if (!core) return;
 
         if (e.type == sf::Event::MouseButtonPressed) {
             sf::Vector2f pos(e.mouseButton.x, e.mouseButton.y);
@@ -225,7 +234,7 @@ public:
                 if (itemButtons[i].getGlobalBounds().contains(pos)) {
                     Player* human = core->getHumanPlayer();
                     int activeIndex = core->getHumanActive();
-                    if (human->useItem(i + 1, activeIndex)) {
+                    if (human && human->useItem(i + 1, activeIndex)) {
                         setLog("Item Used!");
                         refreshItemUI();
                     }
@@ -261,37 +270,60 @@ public:
 
     void update(double dt) override
     {
+        if (!core) return;
         core->update(dt);
 
         // Update active sprites
-        activeHuman.setTexture(*getTexture(core->getHumanPet(core->getHumanActive())));
-        activeAI.setTexture(*getTexture(core->getAIPet(core->getAIActive())));
+        Pet* hPet = core->getHumanPet(core->getHumanActive());
+        Pet* aPet = core->getAIPet(core->getAIActive());
+        if (hPet) activeHuman.setTexture(*getTexture(hPet));
+        if (aPet) activeAI.setTexture(*getTexture(aPet));
 
         // Update health bars
-        float humanHealthRatio = core->getHumanPet(core->getHumanActive())->getHealth() / core->getHumanPet(core->getHumanActive())->getMaxHealth();
-        barHuman.setSize({ 300 * humanHealthRatio, 25 });
+        float humanHealthRatio = 0.0f;
+        if (hPet && hPet->getMaxHealth() > 0.0)
+            humanHealthRatio = float(hPet->getHealth() / hPet->getMaxHealth());
+        if (humanHealthRatio < 0.0f) humanHealthRatio = 0.0f;
+        if (humanHealthRatio > 1.0f) humanHealthRatio = 1.0f;
+        barHuman.setSize({ 300.0f * humanHealthRatio, 25 });
 
-        float aiHealthRatio = core->getAIPet(core->getAIActive())->getHealth() / core->getAIPet(core->getAIActive())->getMaxHealth();
-        barAI.setSize({ 300 * aiHealthRatio, 25 });
+        float aiHealthRatio = 0.0f;
+        if (aPet && aPet->getMaxHealth() > 0.0)
+            aiHealthRatio = float(aPet->getHealth() / aPet->getMaxHealth());
+        if (aiHealthRatio < 0.0f) aiHealthRatio = 0.0f;
+        if (aiHealthRatio > 1.0f) aiHealthRatio = 1.0f;
+        barAI.setSize({ 300.0f * aiHealthRatio, 25 });
 
         // Update human stats text
-        Pet* humanPet = core->getHumanPet(core->getHumanActive());
-        humanStatsText.setString(
-            "Health: " + std::to_string(int(humanPet->getHealth())) + "/" + std::to_string(int(humanPet->getMaxHealth())) + "\n" +
-            "Attack: " + std::to_string(int(humanPet->getAttackPower())) + "\n" +
-            "Defense: " + std::to_string(int(humanPet->getDefense())) + "\n" +
-            "Speed: " + std::to_string(int(humanPet->getSpeed()))
-        );
+        if (hPet)
+        {
+            humanStatsText.setString(
+                "Health: " + std::to_string(int(hPet->getHealth())) + "/" + std::to_string(int(hPet->getMaxHealth())) + "\n" +
+                "Attack: " + std::to_string(int(hPet->getAttackPower())) + "\n" +
+                "Defense: " + std::to_string(int(hPet->getDefense())) + "\n" +
+                "Speed: " + std::to_string(int(hPet->getSpeed()))
+            );
+        }
+        else
+        {
+            humanStatsText.setString("Health: -\nAttack: -\nDefense: -\nSpeed: -");
+        }
         humanStatsText.setPosition(50, 650); // Bottom-right corner for human stats
 
         // Update AI stats text
-        Pet* aiPet = core->getAIPet(core->getAIActive());
-        aiStatsText.setString(
-            "Health: " + std::to_string(int(aiPet->getHealth())) + "/" + std::to_string(int(aiPet->getMaxHealth())) + "\n" +
-            "Attack: " + std::to_string(int(aiPet->getAttackPower())) + "\n" +
-            "Defense: " + std::to_string(int(aiPet->getDefense())) + "\n" +
-            "Speed: " + std::to_string(int(aiPet->getSpeed()))
-        );
+        if (aPet)
+        {
+            aiStatsText.setString(
+                "Health: " + std::to_string(int(aPet->getHealth())) + "/" + std::to_string(int(aPet->getMaxHealth())) + "\n" +
+                "Attack: " + std::to_string(int(aPet->getAttackPower())) + "\n" +
+                "Defense: " + std::to_string(int(aPet->getDefense())) + "\n" +
+                "Speed: " + std::to_string(int(aPet->getSpeed()))
+            );
+        }
+        else
+        {
+            aiStatsText.setString("Health: -\nAttack: -\nDefense: -\nSpeed: -");
+        }
         aiStatsText.setPosition(1000, 650); // Bottom-left corner for AI stats
 
         // Update log timer
@@ -381,7 +413,7 @@ public:
 
 
     bool isFinished() const override {
-        return core->isBattleOver();
+        return core ? core->isBattleOver() : true;
     }
 
 private:
@@ -395,8 +427,10 @@ private:
     }
 
     void refreshItemUI() {
+        if (!core) { itemCount = 0; return; }
         Player* human = core->getHumanPlayer();
-        itemCount = human->getInventoryCount(); // Get the updated number of items in the inventory
+        itemCount = human ? human->getInventoryCount() : 0;
+        itemCount = std::min(itemCount, MAX_ITEMS);
 
         const float panelW = 200.0f;         // width of our item panel
         const float panelX = graphics->getSize().x - (panelW + 550); // flush right
@@ -417,7 +451,8 @@ private:
 
             // Update label
             itemLabels[i].setFont(*font);
-            itemLabels[i].setString(human->getInventoryItem(i)->getName());
+            Item* it = human ? human->getInventoryItem(i) : nullptr;
+            itemLabels[i].setString(it ? it->getName() : "(empty)");
             itemLabels[i].setCharacterSize(18);
 
             // Center text in the button
