@@ -1,0 +1,97 @@
+# =========================
+# C++ / SFML (Windows) repo
+# =========================
+
+# --- Build output directories ---
+Debug/
+Release/
+MinSizeRel/
+RelWithDebInfo/
+x64/
+x86/
+Win32/
+bin/
+obj/
+out/
+build/
+build-*/
+cmake-build-*/
+
+# --- Compiled objects / libs ---
+*.o
+*.obj
+*.lo
+*.slo
+*.a
+*.lib
+*.dll.a
+*.so
+*.dylib
+*.pch
+*.gch
+
+# --- Executables / debug symbols ---
+*.exe
+*.out
+*.app
+*.pdb
+*.idb
+*.ilk
+*.dmp
+*.dbg
+
+# --- CMake ---
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+install_manifest.txt
+compile_commands.json
+
+# --- Make / Ninja ---
+Makefile
+*.make
+*.ninja
+.ninja_deps
+.ninja_log
+
+# --- Visual Studio / MSVC ---
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*.opendb
+ipch/
+
+# Per-user Visual Studio files (keep project files)
+*.vcxproj.user
+
+# Visual Studio build logs
+*.tlog
+*.log
+
+# --- VS Code ---
+.vscode/
+
+# --- JetBrains (CLion/Rider/IDEA) ---
+.idea/
+
+# --- OS / tooling noise ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Archives (optional) ---
+*.zip
+*.7z
+*.rar
+
+# Notes:
+# - SFML runtime DLLs (e.g. sfml-*.dll, openal32.dll) are NOT ignored here,
+#   since some projects commit them for easy running. If you prefer to ignore
+#   them and ship via installer/releases instead, tell me and I’ll update this.
+
